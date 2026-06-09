@@ -9,7 +9,10 @@ service cloud.firestore {
     }
     function isAdmin() {
       return signedIn()
-        && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+        && (
+          request.auth.token.email == "admin_exchange@jbe.go.kr"
+          || exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+        );
     }
     function validProgramType(value) {
       return value in ["online", "fieldTrip", "invitation"];

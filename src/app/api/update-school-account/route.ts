@@ -1,5 +1,6 @@
 import { FieldValue } from "firebase-admin/firestore";
 import { NextResponse, type NextRequest } from "next/server";
+import { isConfiguredAdminEmail } from "@/lib/admin-accounts";
 import { getAdminAuth, getAdminDb } from "@/lib/firebase-admin";
 
 export const runtime = "nodejs";
@@ -13,8 +14,11 @@ async function assertAdmin(request: NextRequest) {
   }
 
   const decoded = await getAdminAuth().verifyIdToken(token);
-  const adminDoc = await getAdminDb().doc(`admins/${decoded.uid}`).get();
+  if (isConfiguredAdminEmail(decoded.email)) {
+    return decoded.uid;
+  }
 
+  const adminDoc = await getAdminDb().doc(`admins/${decoded.uid}`).get();
   if (!adminDoc.exists) {
     throw new Error("관리자 권한이 없습니다.");
   }
@@ -46,29 +50,26 @@ export async function POST(request: NextRequest) {
       throw new Error("새 비밀번호는 6자 이상이어야 합니다.");
     }
 
-    const authUpdate: { displayName?: string; password?: string } = {};
-    if (schoolName) authUpdate.displayName = schoolName;
-    if (newPassword) authUpdate.password = newPassword;
-    await getAdminAuth().updateUser(body.uid, authUpdate);
+    await getAdminAuth().updateUser(body.uid, {
+      ...(schoolName ? { displayName: schoolName } : {}),
+      ...(newPassword ? { password: newPassword } : {})
+    });
 
-    const firestoreUpdate = {
-      ...(schoolName ? { schoolName, displayName: schoolName } : {}),
-      ...(newPassword
-        ? {
-            isFirstLogin: true,
-            mustChangePassword: true,
-            passwordResetBy: adminUid
-          }
-        : {}),
-      updatedBy: adminUid,
-      updatedAt: FieldValue.serverTimestamp()
-    };
-
-    const db = getAdminDb();
-    await Promise.all([
-      db.doc(`schools/${body.uid}`).set(firestoreUpdate, { merge: true }),
-      db.doc(`users/${body.uid}`).set(firestoreUpdate, { merge: true })
-    ]);
+    await getAdminDb().doc(`schools/${body.uid}`).set(
+      {
+        ...(schoolName ? { schoolName, displayName: schoolName } : {}),
+        ...(newPassword
+          ? {
+              isFirstLogin: true,
+              mustChangePassword: true,
+              passwordResetBy: adminUid
+            }
+          : {}),
+        updatedBy: adminUid,
+        updatedAt: FieldValue.serverTimestamp()
+      },
+      { merge: true }
+    );
 
     return NextResponse.json({ ok: true, uid: body.uid });
   } catch (error) {

@@ -166,7 +166,7 @@ export function AdminDashboard() {
       ) : null}
 
       {view === "stats" ? <AdminStats schools={schools} schedules={schedules} /> : null}
-      {view === "calendar" ? <AdminCalendar schedules={schedules} schools={schools} /> : null}
+      {view === "calendar" ? <AdminCalendar schedules={schedules} /> : null}
       {view === "accounts" ? <SchoolAccountManager schools={schools} /> : null}
       {view === "faq" ? <FaqManager /> : null}
 
@@ -253,7 +253,6 @@ export function AdminDashboard() {
                 <ScheduleCalendar
                   type={activeTab}
                   schedules={selectedTabSchedules}
-                  videoLinks={selectedSchool.videoLinks?.[activeTab] ?? []}
                   onCreate={(nextDraft) => {
                     setEditingItem(null);
                     setDraft(nextDraft);

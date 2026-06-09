@@ -54,13 +54,11 @@ function renderSchoolNameOnly(info: EventContentArg) {
 export function ScheduleCalendar({
   type,
   schedules,
-  videoLinks = [],
   onCreate,
   onEdit
 }: {
   type: ProgramType;
   schedules: ScheduleItem[];
-  videoLinks?: string[];
   onCreate: (draft: CalendarDraft) => void;
   onEdit: (item: ScheduleItem) => void;
 }) {
@@ -143,7 +141,6 @@ export function ScheduleCalendar({
 
       <ScheduleDetailModal
         item={detailItem}
-        videoLinks={videoLinks}
         onClose={() => setDetailItem(null)}
         onEdit={(item) => {
           setDetailItem(null);

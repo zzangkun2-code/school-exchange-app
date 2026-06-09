@@ -9,7 +9,7 @@ import type { EventClickArg, EventContentArg, EventInput } from "@fullcalendar/c
 import koLocale from "@fullcalendar/core/locales/ko";
 import { ScheduleDetailModal } from "@/components/calendar/ScheduleDetailModal";
 import { PROGRAMS } from "@/lib/constants";
-import type { ScheduleItem, SchoolProfile } from "@/lib/types";
+import type { ScheduleItem } from "@/lib/types";
 import { addDays } from "@/lib/utils";
 
 const FullCalendar = dynamic(() => import("@fullcalendar/react"), {
@@ -43,16 +43,11 @@ function renderSchoolNameOnly(info: EventContentArg) {
 }
 
 export function AdminCalendar({
-  schedules,
-  schools
+  schedules
 }: {
   schedules: ScheduleItem[];
-  schools: SchoolProfile[];
 }) {
   const [detailItem, setDetailItem] = useState<ScheduleItem | null>(null);
-  const detailSchool = detailItem
-    ? schools.find((school) => school.uid === detailItem.ownerUid)
-    : null;
 
   return (
     <div className="rounded-card border border-white/80 bg-white/80 p-3 shadow-soft">
@@ -81,7 +76,6 @@ export function AdminCalendar({
 
       <ScheduleDetailModal
         item={detailItem}
-        videoLinks={detailItem ? detailSchool?.videoLinks?.[detailItem.type] ?? [] : []}
         onClose={() => setDetailItem(null)}
       />
     </div>

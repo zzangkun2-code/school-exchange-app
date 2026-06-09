@@ -47,7 +47,7 @@ export function LoginScreen() {
     try {
       const authEmail = loginIdToEmail(loginId, activeRole === "school");
       const result = await signInWithEmailAndPassword(requireAuth(), authEmail, password);
-      const admin = await isAdminUser(result.user.uid);
+      const admin = await isAdminUser(result.user.uid, result.user.email);
 
       if (activeRole === "admin" && !admin) {
         await signOut(requireAuth());

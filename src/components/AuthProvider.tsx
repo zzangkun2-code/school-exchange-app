@@ -54,7 +54,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
 
       try {
-        const admin = await isAdminUser(currentUser.uid);
+        const admin = await isAdminUser(currentUser.uid, currentUser.email);
         if (admin) {
           setRole("admin");
           setLoading(false);

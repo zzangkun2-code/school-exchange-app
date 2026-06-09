@@ -1,5 +1,6 @@
 import { FieldValue } from "firebase-admin/firestore";
 import { NextResponse, type NextRequest } from "next/server";
+import { isConfiguredAdminEmail } from "@/lib/admin-accounts";
 import { getAdminAuth, getAdminDb } from "@/lib/firebase-admin";
 import { parseSchoolId, schoolIdToEmail } from "@/lib/school-id";
 import type { BusinessType, SchoolAccountCreateInput } from "@/lib/types";
@@ -28,6 +29,9 @@ async function assertAdmin(request: NextRequest) {
   }
 
   const decoded = await getAdminAuth().verifyIdToken(token);
+  if (isConfiguredAdminEmail(decoded.email)) {
+    return decoded.uid;
+  }
 
   try {
     const adminDoc = await getAdminDb().doc(`admins/${decoded.uid}`).get();

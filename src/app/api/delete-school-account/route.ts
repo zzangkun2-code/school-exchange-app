@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { isConfiguredAdminEmail } from "@/lib/admin-accounts";
 import { getAdminAuth, getAdminDb } from "@/lib/firebase-admin";
 
 export const runtime = "nodejs";
@@ -12,8 +13,11 @@ async function assertAdmin(request: NextRequest) {
   }
 
   const decoded = await getAdminAuth().verifyIdToken(token);
-  const adminDoc = await getAdminDb().doc(`admins/${decoded.uid}`).get();
+  if (isConfiguredAdminEmail(decoded.email)) {
+    return;
+  }
 
+  const adminDoc = await getAdminDb().doc(`admins/${decoded.uid}`).get();
   if (!adminDoc.exists) {
     throw new Error("관리자 권한이 없습니다.");
   }
@@ -40,10 +44,7 @@ export async function POST(request: NextRequest) {
     }
 
     const db = getAdminDb();
-    await Promise.all([
-      db.recursiveDelete(db.doc(`schools/${body.uid}`)),
-      db.recursiveDelete(db.doc(`users/${body.uid}`))
-    ]);
+    await db.recursiveDelete(db.doc(`schools/${body.uid}`));
 
     try {
       await getAdminAuth().deleteUser(body.uid);

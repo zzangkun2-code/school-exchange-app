@@ -1,6 +1,6 @@
 "use client";
 
-import { Edit3, ExternalLink, Link as LinkIcon } from "lucide-react";
+import { Edit3 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Modal } from "@/components/ui/Modal";
 import { PROGRAMS } from "@/lib/constants";
@@ -33,12 +33,10 @@ function getDateText(item: ScheduleItem) {
 
 export function ScheduleDetailModal({
   item,
-  videoLinks = [],
   onClose,
   onEdit
 }: {
   item: ScheduleItem | null;
-  videoLinks?: string[];
   onClose: () => void;
   onEdit?: (item: ScheduleItem) => void;
 }) {
@@ -87,8 +85,6 @@ export function ScheduleDetailModal({
         {item.type === "invitation" ? (
           <InvitationDetails payload={item.payload as InvitationPayload} />
         ) : null}
-
-        <VideoLinkDetails links={videoLinks} />
       </div>
     </Modal>
   );
@@ -125,55 +121,6 @@ function InvitationDetails({ payload }: { payload: InvitationPayload }) {
       <DetailRow label="방문단 학생 수" value={`${payload.visitingStudentCount || 0}명`} />
       <DetailRow label="방문단 교사 수" value={`${payload.visitingTeacherCount || 0}명`} />
       <DetailRow label="수업참여 학생 수(한국측)" value={`${payload.koreanStudentCount || 0}명`} />
-    </div>
-  );
-}
-
-function VideoLinkDetails({ links }: { links: string[] }) {
-  const fiveLinks = [...links, "", "", "", "", ""].slice(0, 5);
-  const hasLinks = fiveLinks.some(Boolean);
-
-  return (
-    <div className="rounded-card border border-skysoft-100 bg-white p-4 shadow-soft">
-      <div className="mb-3 flex items-center gap-2">
-        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-skysoft-100 text-skysoft-700">
-          <LinkIcon className="h-4 w-4" />
-        </div>
-        <div>
-          <h4 className="text-base font-black text-ink-900">제출된 영상 링크</h4>
-          <p className="text-xs font-bold text-slate-500">학교가 제출한 영상 링크 5개입니다.</p>
-        </div>
-      </div>
-
-      {hasLinks ? (
-        <div className="grid gap-2">
-          {fiveLinks.map((link, index) => (
-            <div
-              key={index}
-              className="rounded-card border border-skysoft-100 bg-skysoft-50/60 px-4 py-3"
-            >
-              <p className="text-xs font-extrabold text-skysoft-700">영상 링크 {index + 1}</p>
-              {link ? (
-                <a
-                  href={link}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="mt-1 inline-flex max-w-full items-center gap-2 break-all text-sm font-black text-ink-900 underline decoration-skysoft-300 underline-offset-4"
-                >
-                  <ExternalLink className="h-4 w-4 shrink-0" />
-                  {link}
-                </a>
-              ) : (
-                <p className="mt-1 text-sm font-bold text-slate-400">미입력</p>
-              )}
-            </div>
-          ))}
-        </div>
-      ) : (
-        <p className="rounded-card bg-skysoft-50 px-4 py-3 text-sm font-bold text-slate-500">
-          제출된 영상 링크가 없습니다.
-        </p>
-      )}
     </div>
   );
 }

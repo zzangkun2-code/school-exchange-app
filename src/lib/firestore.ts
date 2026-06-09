@@ -11,6 +11,7 @@ import {
   updateDoc,
   type Unsubscribe
 } from "firebase/firestore";
+import { isConfiguredAdminEmail } from "@/lib/admin-accounts";
 import { requireDb } from "@/lib/firebase";
 import type {
   FaqCategory,
@@ -26,7 +27,11 @@ function sortSchedules(items: ScheduleItem[]) {
   return [...items].sort((a, b) => a.start.localeCompare(b.start));
 }
 
-export async function isAdminUser(uid: string) {
+export async function isAdminUser(uid: string, email?: string | null) {
+  if (isConfiguredAdminEmail(email)) {
+    return true;
+  }
+
   const snapshot = await getDoc(doc(requireDb(), "admins", uid));
   return snapshot.exists();
 }

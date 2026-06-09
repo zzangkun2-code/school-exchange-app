@@ -147,7 +147,6 @@ export function UserDashboard({ profile }: { profile: SchoolProfile }) {
         <ScheduleCalendar
           type={activeTab}
           schedules={filteredSchedules}
-          videoLinks={profile.videoLinks?.[activeTab] ?? []}
           onCreate={(nextDraft) => {
             setEditingItem(null);
             setDraft(nextDraft);
