@@ -140,12 +140,9 @@ export function subscribeSchools(
   );
 }
 
-export async function saveActivityReport(uid: string, type: ProgramType, content: string) {
+export async function saveVideoLinks(uid: string, type: ProgramType, urls: string[]) {
   await updateDoc(doc(requireDb(), "schools", uid), {
-    [`activityReports.${type}`]: {
-      content,
-      updatedAt: serverTimestamp()
-    },
+    [`videoLinks.${type}`]: urls.slice(0, 5),
     updatedAt: serverTimestamp()
   });
 }

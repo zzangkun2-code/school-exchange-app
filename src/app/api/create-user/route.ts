@@ -130,7 +130,7 @@ export async function POST(request: NextRequest) {
           schoolLevel: parsed.schoolLevel,
           partnerInfo: "",
           theme: "",
-          activityReports: {},
+          videoLinks: {},
           isFirstLogin: true,
           mustChangePassword: true,
           createdBy: adminUid,

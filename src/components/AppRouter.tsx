@@ -36,14 +36,10 @@ function AppContent() {
       <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-3 pb-4">
         <div className="flex items-center gap-3">
           <img
-            src="/jeonbuk-office-logo.svg"
-            alt="전북특별자치도교육청"
-            className="h-12 w-auto rounded-card bg-white shadow-soft"
+            src="/logo.png"
+            alt="앱 로고"
+            className="h-12 w-auto rounded-card bg-white px-3 py-2 shadow-soft"
           />
-          <div className="hidden sm:block">
-            <p className="text-sm font-black text-ink-900">국제교류수업사업 관리</p>
-            <p className="text-xs font-bold text-slate-500">{user.email}</p>
-          </div>
         </div>
         <Button
           variant="secondary"

@@ -1,7 +1,7 @@
 "use client";
 
 import { signInWithEmailAndPassword, signOut } from "firebase/auth";
-import { AlertCircle, Building2, LockKeyhole, LogIn, Mail, School, Sparkles } from "lucide-react";
+import { AlertCircle, Building2, LockKeyhole, LogIn, Mail, School } from "lucide-react";
 import { FormEvent, useState } from "react";
 import { hasFirebaseConfig, requireAuth } from "@/lib/firebase";
 import { isAdminUser } from "@/lib/firestore";
@@ -71,17 +71,10 @@ export function LoginScreen() {
       <section className="w-full max-w-4xl">
         <div className="mb-7 text-center">
           <img
-            src="/jeonbuk-office-logo.png"
-            alt="전북특별자치도교육청"
+            src="/logo.png"
+            alt="앱 로고"
             className="mx-auto h-20 w-auto rounded-card bg-white px-4 py-3 shadow-soft sm:h-24"
           />
-          <div className="mt-6 inline-flex items-center gap-2 rounded-full bg-white/75 px-4 py-2 text-sm font-extrabold text-mint-700 shadow-soft">
-            <Sparkles className="h-4 w-4" />
-            국제교류수업사업 관리
-          </div>
-          <h1 className="mt-4 text-3xl font-black text-ink-900 sm:text-4xl">
-            발급받은 계정으로 시작하세요
-          </h1>
         </div>
 
         <StaticCard className="mx-auto max-w-2xl p-5 sm:p-7">

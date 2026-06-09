@@ -1,6 +1,6 @@
 # 국제교류수업사업 관리 웹앱
 
-전북특별자치도교육청의 국제교류수업사업을 관리하는 Next.js + Firebase 웹앱입니다. 인증은 Firebase Email/Password Auth로 통일되어 있으며, 회원가입은 없습니다. 교육청 관리자가 참여학교 계정을 직접 발급합니다.
+국제교류수업사업을 관리하는 Next.js + Firebase 웹앱입니다. 인증은 Firebase Email/Password Auth로 통일되어 있으며, 회원가입은 없습니다. 관리자가 참여학교 계정을 직접 발급합니다.
 
 ## 설치 명령어
 
@@ -34,8 +34,6 @@ src/
       FaqManager.tsx
       SchoolAccountManager.tsx
       SchoolCard.tsx
-    activity/
-      ActivityReportManager.tsx
     calendar/
       ScheduleDetailModal.tsx
       ScheduleCalendar.tsx
@@ -45,6 +43,8 @@ src/
       UserDashboard.tsx
     faq/
       FaqViewerModal.tsx
+    video/
+      VideoLinkManager.tsx
     ui/
     AppRouter.tsx
     AuthProvider.tsx
@@ -91,11 +91,11 @@ Firebase Console에서 Email/Password 로그인을 활성화하고 Firestore를 
 
 학교는 로그인 화면에서 `26e01`만 입력합니다. 앱이 내부적으로 `26e01@exchange.jbe.kr`로 바꿔 Firebase Auth에 로그인합니다.
 
-활동 기록 구조:
+영상 링크 구조:
 
-- 참여학교는 각 사업 탭에서 활동 내용, 학생 소감, 학습 결과를 텍스트로 제출합니다.
-- 활동 기록은 `schools/{학교 UID}` 문서의 `activityReports` 필드에 저장됩니다.
-- 관리자는 학교 관리 화면의 `활동 기록` 탭에서 제출 내용을 읽기 전용으로 확인합니다.
+- 참여학교는 각 사업 탭에서 영상 링크 5개를 제출하고 수정할 수 있습니다.
+- 영상 링크는 `schools/{학교 UID}` 문서의 `videoLinks` 필드에 저장됩니다.
+- 관리자는 학교 관리 화면의 `영상 링크` 탭과 캘린더 상세보기에서 제출 링크를 확인합니다.
 
 보안 구조:
 

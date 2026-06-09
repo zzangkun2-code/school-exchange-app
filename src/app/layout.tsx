@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "국제교류수업사업 관리",
-  description: "전북특별자치도교육청 국제교류수업사업 관리 웹앱"
+  description: "국제교류수업사업 관리 웹앱"
 };
 
 export const viewport: Viewport = {

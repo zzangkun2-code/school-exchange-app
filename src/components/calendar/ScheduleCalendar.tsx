@@ -5,7 +5,12 @@ import dynamic from "next/dynamic";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import timeGridPlugin from "@fullcalendar/timegrid";
-import type { DateSelectArg, EventClickArg, EventInput } from "@fullcalendar/core";
+import type {
+  DateSelectArg,
+  EventClickArg,
+  EventContentArg,
+  EventInput
+} from "@fullcalendar/core";
 import type { DateClickArg } from "@fullcalendar/interaction";
 import koLocale from "@fullcalendar/core/locales/ko";
 import { Plus } from "lucide-react";
@@ -32,20 +37,30 @@ function buildEvents(schedules: ScheduleItem[]): EventInput[] {
       allDay,
       backgroundColor: program.eventColor,
       borderColor: program.eventColor,
-      textColor: item.type === "online" ? "#172033" : "#ffffff",
-      extendedProps: { item }
+      textColor: "#172033",
+      extendedProps: { item, schoolName: item.schoolName }
     };
   });
+}
+
+function renderSchoolNameOnly(info: EventContentArg) {
+  return (
+    <span className="block truncate px-1 text-xs font-extrabold">
+      {String(info.event.extendedProps.schoolName ?? info.event.title)}
+    </span>
+  );
 }
 
 export function ScheduleCalendar({
   type,
   schedules,
+  videoLinks = [],
   onCreate,
   onEdit
 }: {
   type: ProgramType;
   schedules: ScheduleItem[];
+  videoLinks?: string[];
   onCreate: (draft: CalendarDraft) => void;
   onEdit: (item: ScheduleItem) => void;
 }) {
@@ -90,6 +105,7 @@ export function ScheduleCalendar({
           selectable
           dayMaxEvents
           events={buildEvents(schedules)}
+          eventContent={renderSchoolNameOnly}
           headerToolbar={{
             left: "prev,next today",
             center: "title",
@@ -127,6 +143,7 @@ export function ScheduleCalendar({
 
       <ScheduleDetailModal
         item={detailItem}
+        videoLinks={videoLinks}
         onClose={() => setDetailItem(null)}
         onEdit={(item) => {
           setDetailItem(null);

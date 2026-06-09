@@ -5,12 +5,11 @@ import {
   BarChart3,
   CalendarDays,
   Download,
-  FileText,
   HelpCircle,
   KeyRound,
+  Link as LinkIcon,
   ListChecks
 } from "lucide-react";
-import { ActivityReportManager } from "@/components/activity/ActivityReportManager";
 import { AdminCalendar } from "@/components/admin/AdminCalendar";
 import { AdminStats } from "@/components/admin/AdminStats";
 import { FaqManager } from "@/components/admin/FaqManager";
@@ -23,6 +22,7 @@ import { Badge, StatusBadge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { StaticCard } from "@/components/ui/Card";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { VideoLinkManager } from "@/components/video/VideoLinkManager";
 import { BUSINESS_TABS, PROGRAMS } from "@/lib/constants";
 import { downloadSchoolStatsCsv } from "@/lib/csv";
 import {
@@ -39,7 +39,7 @@ import type {
 } from "@/lib/types";
 
 type AdminView = "stats" | "schools" | "calendar" | "accounts" | "faq";
-type DetailView = "schedule" | "activity";
+type DetailView = "schedule" | "video";
 
 export function AdminDashboard() {
   const [schools, setSchools] = useState<SchoolProfile[]>([]);
@@ -96,10 +96,13 @@ export function AdminDashboard() {
     );
   }, 0);
 
-  const activityReportCount = schools.reduce(
+  const videoLinkCount = schools.reduce(
     (count, school) =>
       count +
-      Object.values(school.activityReports ?? {}).filter((report) => report?.content?.trim()).length,
+      Object.values(school.videoLinks ?? {}).reduce(
+        (linkCount, links) => linkCount + (links?.filter(Boolean).length ?? 0),
+        0
+      ),
     0
   );
 
@@ -117,19 +120,15 @@ export function AdminDashboard() {
         <div className="flex flex-col justify-between gap-4 xl:flex-row xl:items-center">
           <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center">
             <img
-              src="/jeonbuk-office-logo.png"
-              alt="전북특별자치도교육청"
+              src="/logo.png"
+              alt="앱 로고"
               className="h-12 w-fit rounded-card bg-white px-3 py-2 shadow-soft sm:h-14"
             />
             <div className="min-w-0">
-              <p className="text-sm font-extrabold text-mint-700">교육청 관리자</p>
-              <h1 className="whitespace-nowrap text-lg font-black leading-tight text-ink-900 sm:text-xl">
-                국제교류수업사업 통합관리
-              </h1>
-              <div className="mt-3 flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2">
                 <Badge tone="blue">학교 {schools.length}</Badge>
                 <Badge tone="mint">일정 {schedules.length}</Badge>
-                <Badge tone="peach">활동 기록 {activityReportCount}</Badge>
+                <Badge tone="peach">영상 링크 {videoLinkCount}</Badge>
                 <Badge tone={missingCount ? "danger" : "peach"}>미입력 {missingCount}</Badge>
               </div>
             </div>
@@ -167,7 +166,7 @@ export function AdminDashboard() {
       ) : null}
 
       {view === "stats" ? <AdminStats schools={schools} schedules={schedules} /> : null}
-      {view === "calendar" ? <AdminCalendar schedules={schedules} /> : null}
+      {view === "calendar" ? <AdminCalendar schedules={schedules} schools={schools} /> : null}
       {view === "accounts" ? <SchoolAccountManager schools={schools} /> : null}
       {view === "faq" ? <FaqManager /> : null}
 
@@ -211,11 +210,11 @@ export function AdminDashboard() {
                   </div>
                   <div className="flex flex-wrap gap-2">
                     <Button
-                      variant={detailView === "activity" ? "primary" : "secondary"}
-                      icon={<FileText className="h-4 w-4" />}
-                      onClick={() => setDetailView("activity")}
+                      variant={detailView === "video" ? "primary" : "secondary"}
+                      icon={<LinkIcon className="h-4 w-4" />}
+                      onClick={() => setDetailView("video")}
                     >
-                      활동 기록
+                      수업 영상 링크
                     </Button>
                   </div>
                 </div>
@@ -243,8 +242,8 @@ export function AdminDashboard() {
                 </div>
               </StaticCard>
 
-              {detailView === "activity" ? (
-                <ActivityReportManager
+              {detailView === "video" ? (
+                <VideoLinkManager
                   profile={selectedSchool}
                   type={activeTab}
                   onBack={() => setDetailView("schedule")}
@@ -254,6 +253,7 @@ export function AdminDashboard() {
                 <ScheduleCalendar
                   type={activeTab}
                   schedules={selectedTabSchedules}
+                  videoLinks={selectedSchool.videoLinks?.[activeTab] ?? []}
                   onCreate={(nextDraft) => {
                     setEditingItem(null);
                     setDraft(nextDraft);

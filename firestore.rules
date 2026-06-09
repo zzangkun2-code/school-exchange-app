@@ -23,7 +23,7 @@ service cloud.firestore {
       return request.resource.data.diff(resource.data).affectedKeys().hasOnly([
         "partnerInfo",
         "theme",
-        "activityReports",
+        "videoLinks",
         "isFirstLogin",
         "mustChangePassword",
         "updatedAt"

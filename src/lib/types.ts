@@ -35,7 +35,7 @@ export type SchoolProfile = {
   schoolLevel: SchoolLevel;
   isFirstLogin?: boolean;
   mustChangePassword?: boolean;
-  activityReports?: Partial<Record<ProgramType, ActivityReport>>;
+  videoLinks?: Partial<Record<ProgramType, string[]>>;
   createdBy?: string;
   createdAt?: unknown;
   updatedAt?: unknown;
@@ -76,11 +76,6 @@ export type ScheduleItem = {
   end: string;
   payload: SchedulePayload;
   createdAt?: unknown;
-  updatedAt?: unknown;
-};
-
-export type ActivityReport = {
-  content: string;
   updatedAt?: unknown;
 };
 

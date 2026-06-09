@@ -5,11 +5,11 @@ import dynamic from "next/dynamic";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import timeGridPlugin from "@fullcalendar/timegrid";
-import type { EventClickArg, EventInput } from "@fullcalendar/core";
+import type { EventClickArg, EventContentArg, EventInput } from "@fullcalendar/core";
 import koLocale from "@fullcalendar/core/locales/ko";
 import { ScheduleDetailModal } from "@/components/calendar/ScheduleDetailModal";
 import { PROGRAMS } from "@/lib/constants";
-import type { ScheduleItem } from "@/lib/types";
+import type { ScheduleItem, SchoolProfile } from "@/lib/types";
 import { addDays } from "@/lib/utils";
 
 const FullCalendar = dynamic(() => import("@fullcalendar/react"), {
@@ -28,14 +28,31 @@ function buildEvents(schedules: ScheduleItem[]): EventInput[] {
       allDay,
       backgroundColor: program.eventColor,
       borderColor: program.eventColor,
-      textColor: item.type === "online" ? "#172033" : "#ffffff",
-      extendedProps: { item }
+      textColor: "#172033",
+      extendedProps: { item, schoolName: item.schoolName }
     };
   });
 }
 
-export function AdminCalendar({ schedules }: { schedules: ScheduleItem[] }) {
+function renderSchoolNameOnly(info: EventContentArg) {
+  return (
+    <span className="block truncate px-1 text-xs font-extrabold">
+      {String(info.event.extendedProps.schoolName ?? info.event.title)}
+    </span>
+  );
+}
+
+export function AdminCalendar({
+  schedules,
+  schools
+}: {
+  schedules: ScheduleItem[];
+  schools: SchoolProfile[];
+}) {
   const [detailItem, setDetailItem] = useState<ScheduleItem | null>(null);
+  const detailSchool = detailItem
+    ? schools.find((school) => school.uid === detailItem.ownerUid)
+    : null;
 
   return (
     <div className="rounded-card border border-white/80 bg-white/80 p-3 shadow-soft">
@@ -46,6 +63,7 @@ export function AdminCalendar({ schedules }: { schedules: ScheduleItem[] }) {
         height="auto"
         dayMaxEvents
         events={buildEvents(schedules)}
+        eventContent={renderSchoolNameOnly}
         headerToolbar={{
           left: "prev,next today",
           center: "title",
@@ -61,7 +79,11 @@ export function AdminCalendar({ schedules }: { schedules: ScheduleItem[] }) {
         }}
       />
 
-      <ScheduleDetailModal item={detailItem} onClose={() => setDetailItem(null)} />
+      <ScheduleDetailModal
+        item={detailItem}
+        videoLinks={detailItem ? detailSchool?.videoLinks?.[detailItem.type] ?? [] : []}
+        onClose={() => setDetailItem(null)}
+      />
     </div>
   );
 }

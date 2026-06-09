@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { FileText, HelpCircle, KeyRound, MapPinned, Sparkles } from "lucide-react";
-import { ActivityReportManager } from "@/components/activity/ActivityReportManager";
+import { HelpCircle, KeyRound, Link as LinkIcon, MapPinned, Sparkles } from "lucide-react";
 import { ScheduleCalendar } from "@/components/calendar/ScheduleCalendar";
 import { ScheduleFormModal } from "@/components/calendar/ScheduleFormModal";
 import { SchoolInfoEditor } from "@/components/dashboard/SchoolInfoEditor";
@@ -12,6 +11,7 @@ import { PasswordChangeModal } from "@/components/PasswordChangeModal";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { StaticCard } from "@/components/ui/Card";
+import { VideoLinkManager } from "@/components/video/VideoLinkManager";
 import { BUSINESS_OPTIONS, BUSINESS_TABS, PROGRAMS } from "@/lib/constants";
 import { deleteSchedule, subscribeSchedules, upsertSchedule } from "@/lib/firestore";
 import type { CalendarDraft, ProgramType, ScheduleItem, SchoolProfile } from "@/lib/types";
@@ -19,7 +19,7 @@ import type { CalendarDraft, ProgramType, ScheduleItem, SchoolProfile } from "@/
 export function UserDashboard({ profile }: { profile: SchoolProfile }) {
   const tabs = useMemo(() => BUSINESS_TABS[profile.businessType], [profile.businessType]);
   const [activeTab, setActiveTab] = useState<ProgramType>(tabs[0]);
-  const [view, setView] = useState<"calendar" | "activity">("calendar");
+  const [view, setView] = useState<"calendar" | "video">("calendar");
   const [schedules, setSchedules] = useState<ScheduleItem[]>([]);
   const [draft, setDraft] = useState<CalendarDraft | null>(null);
   const [editingItem, setEditingItem] = useState<ScheduleItem | null>(null);
@@ -92,11 +92,11 @@ export function UserDashboard({ profile }: { profile: SchoolProfile }) {
               FAQ
             </Button>
             <Button
-              variant={view === "activity" ? "primary" : "secondary"}
-              icon={<FileText className="h-4 w-4" />}
-              onClick={() => setView("activity")}
+              variant={view === "video" ? "primary" : "secondary"}
+              icon={<LinkIcon className="h-4 w-4" />}
+              onClick={() => setView("video")}
             >
-              활동 기록 제출
+              미디어 제출
             </Button>
           </div>
         </div>
@@ -137,8 +137,8 @@ export function UserDashboard({ profile }: { profile: SchoolProfile }) {
         </div>
       ) : null}
 
-      {view === "activity" ? (
-        <ActivityReportManager
+      {view === "video" ? (
+        <VideoLinkManager
           profile={profile}
           type={activeTab}
           onBack={() => setView("calendar")}
@@ -147,6 +147,7 @@ export function UserDashboard({ profile }: { profile: SchoolProfile }) {
         <ScheduleCalendar
           type={activeTab}
           schedules={filteredSchedules}
+          videoLinks={profile.videoLinks?.[activeTab] ?? []}
           onCreate={(nextDraft) => {
             setEditingItem(null);
             setDraft(nextDraft);

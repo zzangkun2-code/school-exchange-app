@@ -70,7 +70,7 @@ export const PROGRAMS: Record<
     color: "text-mint-700",
     bg: "bg-mint-50",
     chip: "bg-mint-100 text-mint-700",
-    eventColor: "#42c7a6"
+    eventColor: "#B8E0D2"
   },
   invitation: {
     label: "초청수업",
@@ -79,7 +79,7 @@ export const PROGRAMS: Record<
     color: "text-pinkwarm-700",
     bg: "bg-pinkwarm-50",
     chip: "bg-pinkwarm-100 text-pinkwarm-700",
-    eventColor: "#ef6fa5"
+    eventColor: "#F7C6D9"
   }
 };
 
@@ -101,7 +101,7 @@ export const ROLE_CARDS = [
   {
     role: "school" as const,
     title: "참여학교",
-    subtitle: "일정과 활동 기록 제출",
+    subtitle: "일정과 영상 링크 제출",
     icon: UsersRound,
     className: "from-pinkwarm-100 to-peach-100 text-pinkwarm-700"
   }
