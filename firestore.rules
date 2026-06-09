@@ -1,24 +1,19 @@
 rules_version = '2';
-
 service cloud.firestore {
   match /databases/{database}/documents {
     function signedIn() {
       return request.auth != null;
     }
-
     function isOwner(uid) {
       return signedIn() && request.auth.uid == uid;
     }
-
     function isAdmin() {
       return signedIn()
         && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
     }
-
     function validProgramType(value) {
       return value in ["online", "fieldTrip", "invitation"];
     }
-
     function schoolEditableFieldsOnly() {
       return request.resource.data.diff(resource.data).affectedKeys().hasOnly([
         "partnerInfo",
@@ -29,22 +24,18 @@ service cloud.firestore {
         "updatedAt"
       ]);
     }
-
     match /admins/{adminId} {
       allow read: if isOwner(adminId) || isAdmin();
       allow write: if isAdmin();
     }
-
     match /faqs/{faqId} {
       allow read: if signedIn();
       allow write: if isAdmin();
     }
-
     match /schools/{schoolId} {
       allow read: if isOwner(schoolId) || isAdmin();
       allow create, delete: if isAdmin();
       allow update: if isAdmin() || (isOwner(schoolId) && schoolEditableFieldsOnly());
-
       match /schedules/{scheduleId} {
         allow read: if isOwner(schoolId) || isAdmin();
         allow create: if validProgramType(request.resource.data.type)
@@ -55,13 +46,10 @@ service cloud.firestore {
         allow update, delete: if isAdmin()
           || (isOwner(schoolId) && resource.data.ownerUid == request.auth.uid);
       }
-
     }
-
     match /{path=**}/schedules/{scheduleId} {
       allow read: if isAdmin();
     }
-
     match /{document=**} {
       allow read, write: if isAdmin();
     }
